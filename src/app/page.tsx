@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Oswald } from "next/font/google";
 import { Header } from "@/components/header";
+import Hero01 from "@/components/hero-01";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
@@ -10,9 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Orb } from "@/components/ui/orb";
 import { NumberTicker } from "@/components/ui/number-ticker";
-import { WordRotate } from "@/components/ui/word-rotate";
 import { Ripple } from "@/components/ui/ripple";
-import { ParticleCircle } from "@/components/particle-circle";
 import { AnimatedList } from "@/components/ui/animated-list";
 import {
   Accordion,
@@ -83,50 +82,7 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Particle Circle Background */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-          <div className="w-full h-full flex items-center justify-center scale-150">
-            <ParticleCircle
-              colors={["#ABFF00", "#000000", "#ABFF00", "#222222", "#ABFF00"]}
-              particleCount={1500}
-            />
-          </div>
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-[1340px] px-8 pt-40 pb-36 md:px-16 lg:px-24">
-          <div className="max-w-4xl">
-            <div className="space-y-8">
-              <h1 className="text-[56px] font-bold leading-[1.1] tracking-[-0.02em] md:text-[72px] lg:text-[80px]">
-                AI-автоматизация, которая{" "}
-                <WordRotate
-                  className="inline-block"
-                  words={["ускоряет бизнес", "снижает издержки", "усиливает продажи", "экономит время"]}
-                />
-              </h1>
-              <p className="text-lg leading-relaxed text-neutral-700 md:text-xl lg:text-2xl">
-                Выстраиваем процессы, убираем рутину, усиливаем отделы продаж и сервис. Без хаоса, без лишних слов.
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <Button
-                  size="lg"
-                  onClick={scrollToContact}
-                  className="h-14 px-8 text-base font-medium rounded-full shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(171,255,0,0.3)] hover:shadow-[0_0_8px_rgba(0,0,0,0.05),0_2px_8px_rgba(0,0,0,0.1),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_16px_rgba(171,255,0,0.4)]"
-                >
-                  Записаться на разбор
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-14 px-8 text-base font-medium rounded-full border-black text-black hover:bg-black hover:text-white"
-                >
-                  Посмотреть примеры
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero01 onContactClick={scrollToContact} />
 
       {/* AI Voice & Audio Section */}
       <section className="relative mx-auto max-w-[1340px] px-8 py-32 md:px-16 lg:px-24">
@@ -173,6 +129,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* Chat & Messaging Section */}
       <section className="relative mx-auto max-w-[1340px] px-8 py-32 md:px-16 lg:px-24">
@@ -253,6 +210,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* Value Sections - Accordion */}
       <section className="mx-auto max-w-[1340px] px-8 py-20 md:px-16 lg:px-24">

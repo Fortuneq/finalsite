@@ -20,54 +20,45 @@ IMAGE_NAME="${DOCKER_USERNAME}/finalsite-nextjs"
 VERSION="${1:-latest}"
 FULL_IMAGE_NAME="${IMAGE_NAME}:${VERSION}"
 
-echo -e "${BLUE}Building image: ${FULL_IMAGE_NAME}${NC}"
+echo -e "${BLUE}Building image for linux/amd64 (x86_64 VPS): ${FULL_IMAGE_NAME}${NC}"
 
-# Сборка образа
-docker build -t "${FULL_IMAGE_NAME}" .
+# Создаем builder если его нет
+if ! docker buildx ls | grep -q "multiplatform"; then
+    echo -e "${BLUE}Creating builder...${NC}"
+    docker buildx create --name multiplatform --use
+    docker buildx inspect --bootstrap
+fi
+
+# Сборка и пуш образа для AMD64
+echo -e "${BLUE}Building and pushing image...${NC}"
+docker buildx build \
+    --platform linux/amd64 \
+    -t "${FULL_IMAGE_NAME}" \
+    --push \
+    .
 
 if [ $? -ne 0 ]; then
-    echo -e "${RED}Build failed!${NC}"
+    echo -e "${RED}Build and push failed!${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}Build successful!${NC}"
+echo -e "${GREEN}Build and push successful!${NC}"
 
 # Тегируем также как latest если это не latest
 if [ "$VERSION" != "latest" ]; then
-    docker tag "${FULL_IMAGE_NAME}" "${IMAGE_NAME}:latest"
-    echo -e "${GREEN}Tagged as latest${NC}"
+    echo -e "${BLUE}Pushing additional tag: ${IMAGE_NAME}:latest${NC}"
+    docker buildx build \
+        --platform linux/amd64 \
+        -t "${IMAGE_NAME}:latest" \
+        --push \
+        .
+    echo -e "${GREEN}Tagged and pushed as latest${NC}"
 fi
 
-# Показываем размер образа
-echo -e "${BLUE}Image size:${NC}"
-docker images "${IMAGE_NAME}" --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
-
-# Спрашиваем подтверждение на пуш
-echo -e "${BLUE}Do you want to push the image to Docker Hub? (y/n)${NC}"
-read -r response
-
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    echo -e "${BLUE}Pushing image...${NC}"
-
-    # Пушим версионный тег
-    docker push "${FULL_IMAGE_NAME}"
-
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}Push failed! Make sure you are logged in: docker login${NC}"
-        exit 1
-    fi
-
-    # Пушим latest если был создан
-    if [ "$VERSION" != "latest" ]; then
-        docker push "${IMAGE_NAME}:latest"
-    fi
-
-    echo -e "${GREEN}Successfully pushed to Docker Hub!${NC}"
-    echo -e "${GREEN}Image: ${FULL_IMAGE_NAME}${NC}"
-    echo ""
-    echo -e "${BLUE}To use on server, update docker-compose.yml with:${NC}"
-    echo "  nextjs:"
-    echo "    image: ${FULL_IMAGE_NAME}"
-else
-    echo -e "${BLUE}Push cancelled${NC}"
-fi
+echo -e "${GREEN}Successfully pushed to Docker Hub!${NC}"
+echo -e "${GREEN}Image: ${FULL_IMAGE_NAME}${NC}"
+echo -e "${GREEN}Platform: linux/amd64 (compatible with x86_64 VPS)${NC}"
+echo ""
+echo -e "${BLUE}To use on server, update docker-compose.yml with:${NC}"
+echo "  nextjs:"
+echo "    image: ${FULL_IMAGE_NAME}"
